@@ -31,10 +31,20 @@ class satellite:
 
         # Step 2. Perturb the vec
         inclination = inclination + uniform(-1, 1) * scale
+        self.inc_bounds = (inclination - scale, inclination + scale)
+        
         raan = raan + uniform(-1, 1) * scale
+        self.raan_bounds = (raan - scale, raan + scale)
+        
         ap = ap + uniform(-1, 1) * scale
+        self.ap_bounds = (ap - scale, ap + scale)
+        
         ma = ma + uniform(-1, 1) * scale
+        self.ma_bounds = (ma - scale, ma + scale)
+
         mm = mm + uniform(-1, 1) * scale * 0.1
+        self.mm_bounds = (mm - scale*0.1, mm + scale*0.1)
+        
         # minute = uniform(-1, 1) * scale
         # minute = minute / (24 * 60)
         # epoch_day = epoch_day + minute
@@ -42,6 +52,13 @@ class satellite:
 
         # Step 3. Return sat with perturbed vec
         return self.vec2sat(vec)
+
+    def get_bounds(self):
+        return [self.inc_bounds,
+                self.raan_bounds,
+                self.ap_bounds,
+                self.ma_bounds,
+                self.mm_bounds]
 
 
 class space:

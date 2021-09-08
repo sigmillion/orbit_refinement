@@ -1,7 +1,27 @@
 from satellite_utils import space, satellite
 from ground_site import ground_site
 from link import link
+from scipy.optimize import minimize
 
+def objective(x, links_est, links_true):
+    new_sat = satellite(links_est[0].sat.vec2sat(x))
+    for le in links_est:
+        le.sat = new_sat
+
+    # Select overpasses for estimated links
+    total_error = 0.0
+    for le, lt in zip(links_est, links_true):
+        le.copy_overpasses(lt.overpass_times_list)
+        # Set up the sample time arrays
+        # for ote, ott in zip(le.overpass_times_list, lt.overpass_times_list):
+        #     ote.make_time_array()
+        #     ott.make_time_array()
+        # Compute the range tables
+        # lt.compute_range_tables()
+        le.compute_range_tables()
+        total_error = total_error + lt.compute_range_rate_error(le)
+    print('Range rate error = ', total_error)
+    return total_error
 
 def main():
     # Get a satellite
@@ -12,6 +32,7 @@ def main():
     # Get a perturbed TLE satellite
     sat_est = satellite(sat_true.perturb_satellite(0.1))
     # sat_est = sat_true
+    perturb_box = sat_true.get_bounds()
     
     # Get a list of ground sites
     ground_sites = [ground_site(0.0, 0.0),
@@ -38,7 +59,11 @@ def main():
     print('Range rate error = ', total_error)
 
     # 4. Use Nelder-Mead to minimize this objective.
-
+    x0 = sat_est.sat2vec()
+    minimize(objective, x0,
+             args=(links_est, links_true),
+             method='Nelder-Mead',
+             bounds=perturb_box)
     # We want to find out how many ground sites and overpasses
     # lead to an identifiable solution.
 
