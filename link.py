@@ -13,8 +13,8 @@ class link:
         self.ranges = []
         self.range_rates = []
         self.min_altitude_degrees = 20
-        self.window_length_days = 3
-        self.number_overpasses = 3
+        self.window_length_days = 10
+        self.number_overpasses = 10
         return
     
     def select_overpasses(self):
@@ -46,6 +46,7 @@ class link:
         self.overpass_times_list = []
         for ot in overpass_times_list:
             ot_new = overpass_times(ot.begin_time, ot.end_time)
+            ot_new.sample_times = ot.sample_times
             self.overpass_times_list.append(ot_new)
         return
 

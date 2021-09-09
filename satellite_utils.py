@@ -15,14 +15,14 @@ class satellite:
     def vec2sat(self, vec):
         line1, line2 = export_tle(self.sat.model)
         line1, line2 = vec2tle(vec, line1, line2)
-        print(line1)
-        print(line2)
+        # print(line1)
+        # print(line2)
         return EarthSatellite(line1, line2)
 
     def sat2vec(self):
         line1, line2 = export_tle(self.sat.model)
-        print(line1)
-        print(line2)
+        # print(line1)
+        # print(line2)
         return tle2vec(line1, line2)
 
     def perturb_satellite(self, scale=1.0):

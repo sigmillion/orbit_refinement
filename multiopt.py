@@ -58,12 +58,28 @@ def main():
         total_error = total_error + lt.compute_range_rate_error(le)
     print('Range rate error = ', total_error)
 
+    # Test code
+    # x0 = sat_est.sat2vec()
+    # x0 = sat_true.sat2vec()
+    # print(x0)
+    # val = objective(x0, links_est, links_true)
+    # print(val)
+    # return
+    
     # 4. Use Nelder-Mead to minimize this objective.
+    # x0 = sat_true.sat2vec()
     x0 = sat_est.sat2vec()
-    minimize(objective, x0,
-             args=(links_est, links_true),
-             method='Nelder-Mead',
-             bounds=perturb_box)
+    opt_result = minimize(objective, x0,
+                        args=(links_est, links_true),
+                        method='Nelder-Mead',
+                        bounds=perturb_box)
+
+    print(x0)
+    print(sat_true.sat2vec())
+    print(opt_result.x)
+    print(opt_result.message)
+    print(opt_result.nit)
+    
     # We want to find out how many ground sites and overpasses
     # lead to an identifiable solution.
 
