@@ -6,15 +6,15 @@ import numpy as np
 
 
 class link:
-    def __init__(self, ground_site, satellite):
+    def __init__(self, ground_site, satellite, wld=3, no=3):
         self.gnd = ground_site
         self.sat = satellite
         self.overpass_times_list = []
         self.ranges = []
         self.range_rates = []
         self.min_altitude_degrees = 20
-        self.window_length_days = 10
-        self.number_overpasses = 10
+        self.window_length_days = wld
+        self.number_overpasses = no
         return
     
     def select_overpasses(self):
@@ -92,6 +92,8 @@ class link:
 
     def compute_range_rate_error(self, other_link):
         total_error = 0.0
+        total_samples = 0
         for rr0, rr1 in zip(self.range_rates, other_link.range_rates):
-            total_error = total_error + np.linalg.norm(rr0 - rr1)
-        return total_error
+            total_error = total_error + np.linalg.norm(rr0 - rr1, ord=1)  # 1-norm
+            total_samples = total_samples + len(rr0)
+        return total_error, total_samples

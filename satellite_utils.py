@@ -1,7 +1,7 @@
 from skyfield.api import load, EarthSatellite
 from sgp4.exporter import export_tle
 from tle_utils import vec2tle, tle2vec
-from random import uniform, randrange
+from random import uniform, randrange, seed
 
 
 class satellite:
@@ -83,8 +83,9 @@ class space:
 
     def select_satellite(self):
         # Select a satellite at random
-        i = randrange(0, len(self.satellites))
+        # i = randrange(0, len(self.satellites))
+        i = 4
         print('Selected satellite index:', i, self.satellites[i].name)
-        #return self.satellites[i]
-        return self.satellites[4]
+        return self.satellites[i]
+        # return self.satellites[4]
 

@@ -2,6 +2,7 @@ from satellite_utils import space, satellite
 from ground_site import ground_site
 from link import link
 from scipy.optimize import minimize
+import numpy as np
 
 def objective(x, links_est, links_true):
     new_sat = satellite(links_est[0].sat.vec2sat(x))
@@ -10,6 +11,7 @@ def objective(x, links_est, links_true):
 
     # Select overpasses for estimated links
     total_error = 0.0
+    total_samples = 0
     for le, lt in zip(links_est, links_true):
         le.copy_overpasses(lt.overpass_times_list)
         # Set up the sample time arrays
@@ -19,11 +21,13 @@ def objective(x, links_est, links_true):
         # Compute the range tables
         # lt.compute_range_tables()
         le.compute_range_tables()
-        total_error = total_error + lt.compute_range_rate_error(le)
-    print('Range rate error = ', total_error)
+        new_error, new_samples = lt.compute_range_rate_error(le)
+        total_error = total_error + new_error
+        total_samples = total_samples + new_samples
+    print('Range rate error = ', total_error, total_samples)
     return total_error
 
-def main():
+def runopt(num_ground_sites=3, window_length_days=3, num_overpasses=3):
     # Get a satellite
     leo = space()
     sat_true = satellite(leo.select_satellite())
@@ -35,16 +39,17 @@ def main():
     perturb_box = sat_true.get_bounds()
     
     # Get a list of ground sites
-    ground_sites = [ground_site(0.0, 0.0),
-                    ground_site(10.0, 10.0),
-                    ground_site(20.0, 20.0)]
+    ground_sites = []
+    for i in range(num_ground_sites):
+        ground_sites.append(ground_site(0.0,10.0*i))  # Put ground sites around equator
 
     # Setup ground-satellite links
-    links_true = [link(gs, sat_true) for gs in ground_sites]
-    links_est  = [link(gs, sat_est ) for gs in ground_sites]
+    links_true = [link(gs, sat_true, window_length_days, num_overpasses) for gs in ground_sites]
+    links_est  = [link(gs, sat_est,  window_length_days, num_overpasses) for gs in ground_sites]
 
     # Select overpasses for estimated links
     total_error = 0.0
+    total_samples = 0
     for le, lt in zip(links_est, links_true):
         le.select_overpasses()
         lt.copy_overpasses(le.overpass_times_list)
@@ -55,8 +60,10 @@ def main():
         # Compute the range tables
         lt.compute_range_tables()
         le.compute_range_tables()
-        total_error = total_error + lt.compute_range_rate_error(le)
-    print('Range rate error = ', total_error)
+        new_error, new_samples = lt.compute_range_rate_error(le)
+        total_error = total_error + new_error
+        total_samples = total_samples + new_samples
+    print('Range rate error = ', total_error / total_samples)
 
     # Test code
     # x0 = sat_est.sat2vec()
@@ -67,18 +74,24 @@ def main():
     # return
     
     # 4. Use Nelder-Mead to minimize this objective.
-    # x0 = sat_true.sat2vec()
-    x0 = sat_est.sat2vec()
-    opt_result = minimize(objective, x0,
+    xt = sat_true.sat2vec()
+    xe = sat_est.sat2vec()
+    opt_result = minimize(objective, xe,
                         args=(links_est, links_true),
                         method='Nelder-Mead',
                         bounds=perturb_box)
 
-    print(x0)
-    print(sat_true.sat2vec())
-    print(opt_result.x)
+    xe = np.array(xe)
+    xt = np.array(xt)
+    xo = opt_result.x
+    fo = opt_result.fun
+    nit = opt_result.nit
+    print(xe)
+    print(xt)
+    print(xo)
+    print(fo)
+    print(nit)
     print(opt_result.message)
-    print(opt_result.nit)
     
     # We want to find out how many ground sites and overpasses
     # lead to an identifiable solution.
@@ -86,12 +99,10 @@ def main():
     # Ask Charles what TLE parameters are the most vital for
     # overpass estimation and why.  Take better notes this
     # time.
-
     
-    
-    return
+    return xt, xe, xo, fo, nit
 
 
 if __name__ == "__main__":
     # execute only if run as a script
-    main()
+    runopt(num_ground_sites=1, window_length_days=3, num_overpasses=1)
