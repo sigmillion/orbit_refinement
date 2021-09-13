@@ -13,7 +13,9 @@ if __name__ == "__main__":
 
         for no in range(len(num_overpasses)):
             for ng in range(len(num_groundsites)):
-                vals = np.ndarray((num_iterations,))
+                fovals = np.ndarray((num_iterations,))
+                fpvals = np.ndarray((num_iterations,))
+                xerr = np.ndarray((num_iterations,))
                 for k in range(num_iterations):
                     val = np.load(f)
                     num_gs = val[0]
@@ -21,12 +23,16 @@ if __name__ == "__main__":
                     k = val[2]
                     k = int(k)
                     fo = val[3]
-                    nit = val[4]
+                    fp = val[4]
+                    nit = val[5]
                     xt = np.load(f)
                     xe = np.load(f)
                     xo = np.load(f)
-                    vals[k] = fo
+                    fovals[k] = fo
+                    fpvals[k] = fp
+                    xerr[k] = np.linalg.norm(xt - xo)
+                    xerr[k] = xerr[k] * xerr[k]
                     # print(xt)
                     # print(xo)
                     # print(' ')
-                print([num_gs, num_op, np.mean(vals), np.std(vals)])
+                print([num_gs, num_op, np.mean(fovals), np.std(fovals), np.mean(fpvals), np.std(fpvals), np.sqrt(np.mean(xerr))])

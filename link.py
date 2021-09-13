@@ -33,7 +33,7 @@ class link:
         # Sort list of durations
         duration.sort(key=lambda x: x[0])
         # Select the longest overpasses
-        duration = duration[-self.number_overpasses:]
+        duration = duration[-(self.number_overpasses+1):]  # Get one more overpass for prediction purposes
         # Process each remaining overpass
         for d in duration:
             ot = overpass_times(tm[d[1]].tt, tm[d[2]].tt)
@@ -93,7 +93,13 @@ class link:
     def compute_range_rate_error(self, other_link):
         total_error = 0.0
         total_samples = 0
-        for rr0, rr1 in zip(self.range_rates, other_link.range_rates):
-            total_error = total_error + np.linalg.norm(rr0 - rr1, ord=1)  # 1-norm
-            total_samples = total_samples + len(rr0)
-        return total_error, total_samples
+        prediction_error = 0.0
+        prediction_samples = 0
+        for i, rr0, rr1 in zip(range(len(self.range_rates)), self.range_rates, other_link.range_rates):
+            if(i < len(self.range_rates)-1):
+                total_error = total_error + np.linalg.norm(rr0 - rr1, ord=1)  # 1-norm
+                total_samples = total_samples + len(rr0)
+            else:
+                prediction_error = np.linalg.norm(rr0 - rr1, ord=1)  # 1-norm
+                prediction_samples = len(rr0)
+        return total_error, total_samples, prediction_error, prediction_samples

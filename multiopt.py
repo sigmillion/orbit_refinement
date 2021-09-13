@@ -4,7 +4,7 @@ from link import link
 from scipy.optimize import minimize
 import numpy as np
 
-def objective(x, links_est, links_true):
+def objective(x, links_est, links_true, prediction=False):
     new_sat = satellite(links_est[0].sat.vec2sat(x))
     for le in links_est:
         le.sat = new_sat
@@ -12,20 +12,21 @@ def objective(x, links_est, links_true):
     # Select overpasses for estimated links
     total_error = 0.0
     total_samples = 0
+    prediction_error = 0.0
+    prediction_samples = 0
     for le, lt in zip(links_est, links_true):
         le.copy_overpasses(lt.overpass_times_list)
-        # Set up the sample time arrays
-        # for ote, ott in zip(le.overpass_times_list, lt.overpass_times_list):
-        #     ote.make_time_array()
-        #     ott.make_time_array()
-        # Compute the range tables
-        # lt.compute_range_tables()
         le.compute_range_tables()
-        new_error, new_samples = lt.compute_range_rate_error(le)
+        new_error, new_samples, new_prediction_error, new_prediction_samples = lt.compute_range_rate_error(le)
         total_error = total_error + new_error
         total_samples = total_samples + new_samples
-    print('Range rate error = ', total_error, total_samples)
-    return total_error
+        prediction_error = prediction_error + new_prediction_error
+        prediction_samples = prediction_samples + new_prediction_samples
+    print('Range rate error = ', total_error / total_samples)
+    if prediction==False:
+        return total_error / total_samples
+    else:
+        return prediction_error / prediction_samples
 
 def runopt(num_ground_sites=3, window_length_days=3, num_overpasses=3):
     # Get a satellite
@@ -60,7 +61,7 @@ def runopt(num_ground_sites=3, window_length_days=3, num_overpasses=3):
         # Compute the range tables
         lt.compute_range_tables()
         le.compute_range_tables()
-        new_error, new_samples = lt.compute_range_rate_error(le)
+        new_error, new_samples, predict_error, predict_samples = lt.compute_range_rate_error(le)
         total_error = total_error + new_error
         total_samples = total_samples + new_samples
     print('Range rate error = ', total_error / total_samples)
@@ -79,7 +80,8 @@ def runopt(num_ground_sites=3, window_length_days=3, num_overpasses=3):
     opt_result = minimize(objective, xe,
                         args=(links_est, links_true),
                         method='Nelder-Mead',
-                        bounds=perturb_box)
+                        bounds=perturb_box,
+                        options={'xatol' : 1e-10, 'fatol' : 1e-10})
 
     xe = np.array(xe)
     xt = np.array(xt)
@@ -92,6 +94,8 @@ def runopt(num_ground_sites=3, window_length_days=3, num_overpasses=3):
     print(fo)
     print(nit)
     print(opt_result.message)
+    fp = objective(xo, links_est, links_true, prediction=True)
+    
     
     # We want to find out how many ground sites and overpasses
     # lead to an identifiable solution.
@@ -100,7 +104,7 @@ def runopt(num_ground_sites=3, window_length_days=3, num_overpasses=3):
     # overpass estimation and why.  Take better notes this
     # time.
     
-    return xt, xe, xo, fo, nit
+    return xt, xe, xo, fo, fp, nit
 
 
 if __name__ == "__main__":
