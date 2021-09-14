@@ -6,9 +6,9 @@ import random
 if __name__ == "__main__":
     seed_val = 1234
     random.seed(seed_val)  # Set the seed for repeatability
-    num_overpasses = [1, 3, 5]
-    num_groundsites = [1, 3, 5]
-    num_iterations = 30
+    num_overpasses = [2]
+    num_groundsites = [1, 3]
+    num_iterations = 3
 
     # Save data
     with open('data.npy', 'wb') as f:
