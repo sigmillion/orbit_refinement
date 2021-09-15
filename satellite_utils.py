@@ -27,7 +27,8 @@ class satellite:
 
     def perturb_satellite(self, scale=1.0):
         # Step 1. Extract vec
-        inclination, raan, ap, ma, mm = self.sat2vec()
+        # inclination, raan, ap, ma, mm = self.sat2vec()
+        inclination, raan, ap, mm = self.sat2vec()
 
         # Step 2. Perturb the vec
         inclination = inclination + uniform(-1, 1) * scale
@@ -39,8 +40,8 @@ class satellite:
         ap = ap + uniform(-1, 1) * scale
         self.ap_bounds = (ap - scale, ap + scale)
         
-        ma = ma + uniform(-1, 1) * scale
-        self.ma_bounds = (ma - scale, ma + scale)
+        # ma = ma + uniform(-1, 1) * scale
+        # self.ma_bounds = (ma - scale, ma + scale)
 
         mm = mm + uniform(-1, 1) * scale * 0.1
         self.mm_bounds = (mm - scale*0.1, mm + scale*0.1)
@@ -48,7 +49,8 @@ class satellite:
         # minute = uniform(-1, 1) * scale
         # minute = minute / (24 * 60)
         # epoch_day = epoch_day + minute
-        vec = (inclination, raan, ap, ma, mm)
+        #vec = (inclination, raan, ap, ma, mm)
+        vec = (inclination, raan, ap, mm)
 
         # Step 3. Return sat with perturbed vec
         return self.vec2sat(vec)
@@ -57,8 +59,12 @@ class satellite:
         return [self.inc_bounds,
                 self.raan_bounds,
                 self.ap_bounds,
-                self.ma_bounds,
                 self.mm_bounds]
+        # return [self.inc_bounds,
+        #         self.raan_bounds,
+        #         self.ap_bounds,
+        #         self.ma_bounds,
+        #         self.mm_bounds]
 
 
 class space:

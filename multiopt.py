@@ -96,7 +96,6 @@ def runopt(num_ground_sites=3, window_length_days=3, num_overpasses=3):
     print(opt_result.message)
     fp = objective(xo, links_est, links_true, prediction=True)
     
-    
     # We want to find out how many ground sites and overpasses
     # lead to an identifiable solution.
 

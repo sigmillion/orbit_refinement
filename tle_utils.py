@@ -31,7 +31,8 @@ def line2_to_param(line):
 def tle2vec(line1,line2):
     (line_num, sat_num, launch_info, epoch_yr, epoch_day, mmd, mmdd, drag, eff_type, eset_num, check_sum) = line1_to_param(line1)
     (line_num, sat_num, inclination, raan, eccentricity, ap, ma, mm, rev_num, check_sum) = line2_to_param(line2)
-    return inclination, raan, ap, ma, mm
+    return inclination, raan, ap, mm
+    # return inclination, raan, ap, ma, mm
     # return inclination, raan, ap, ma, epoch_day
 
 def tle2elements(line1,line2):
@@ -89,7 +90,8 @@ def vec2tle(vec,line1,line2):
     (line_num1, sat_num1, launch_info, epoch_yr, epoch_day, mmd, mmdd, drag, eff_type, eset_num, check_sum1) = line1_to_param(line1)
     (line_num2, sat_num2, inclination, raan, eccentricity, ap, ma, mm, rev_num, check_sum2) = line2_to_param(line2)
     # Transfer over vector parameters
-    inclination, raan, ap, ma, mm = vec
+    inclination, raan, ap, mm = vec
+    # inclination, raan, ap, ma, mm = vec
     # inclination, raan, ap, ma, epoch_day = vec
     # Reconstruct TLE lines
     line1 = build_line1(line_num1, sat_num1, launch_info, epoch_yr, epoch_day, mmd, mmdd, drag, eff_type, eset_num)
