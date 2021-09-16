@@ -8,7 +8,7 @@ if __name__ == "__main__":
     random.seed(seed_val)  # Set the seed for repeatability
     num_overpasses = [1, 3, 5]
     num_groundsites = [1, 3, 5]
-    num_iterations = 3
+    num_iterations = 2
 
     # Save data
     with open('data.npy', 'wb') as f:
