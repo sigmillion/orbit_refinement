@@ -77,18 +77,41 @@ class link:
             t = ot.sample_times
             rt = ts.tt_jd(ot.begin_time + sec2tt(t))
             dt = difference.at(rt)
-            r = [np.linalg.norm(d.position.km) for d in dt]
-
-            rt1 = ts.tt_jd(ot.begin_time + sec2tt(t + 1.0))
-            rt0 = ts.tt_jd(ot.begin_time + sec2tt(t - 1.0))
-            dt1 = difference.at(rt1)
-            dt0 = difference.at(rt0)
-            rr = np.zeros((len(r),))
-            for i in range(len(r)):
-                rr[i] = dt1[i].distance().km - dt0[i].distance().km
+            num = len(t)
+            r = np.zeros((num,))
+            rr = np.zeros((num,))
+            for i in range(num):
+                lat, lon, rng, _, _, rngrate = dt[i].frame_latlon_and_rates(self.gnd.topos)
+                r[i] = rng.km
+                rr[i] = rngrate.km_per_s
             self.ranges.append(np.array(r))
             self.range_rates.append(rr)
         return
+
+    
+#    def compute_range_tables(self):
+#        ts = load.timescale()
+#        difference = self.sat.sat - self.gnd.topos
+#        #times = []
+#        #real_times = []
+#        self.ranges = []
+#        self.range_rates = []
+#        for ot in self.overpass_times_list:
+#            t = ot.sample_times
+#            rt = ts.tt_jd(ot.begin_time + sec2tt(t))
+#            dt = difference.at(rt)
+#            r = [np.linalg.norm(d.position.km) for d in dt]
+#
+#            rt1 = ts.tt_jd(ot.begin_time + sec2tt(t + 1.0))
+#            rt0 = ts.tt_jd(ot.begin_time + sec2tt(t - 1.0))
+#            dt1 = difference.at(rt1)
+#            dt0 = difference.at(rt0)
+#            rr = np.zeros((len(r),))
+#            for i in range(len(r)):
+#                rr[i] = dt1[i].distance().km - dt0[i].distance().km
+#            self.ranges.append(np.array(r))
+#            self.range_rates.append(rr)
+#        return
 
     def compute_range_rate_error(self, other_link):
         total_error = 0.0
