@@ -86,6 +86,10 @@ class link:
                 rr[i] = rngrate.km_per_s
             self.ranges.append(np.array(r))
             self.range_rates.append(rr)
+        # with open('range_est.npy', 'wb') as f:
+        #     np.save(f, self.ranges)
+        # with open('range_rate_est.npy', 'wb') as f:
+        #     np.save(f, self.range_rates)
         return
 
     

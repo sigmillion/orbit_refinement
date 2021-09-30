@@ -11,12 +11,12 @@ if __name__ == "__main__":
         num_iterations = np.load(f)
         num_iterations = num_iterations[0]
 
-        for no in range(len(num_overpasses)):
+        fovals = np.ndarray((num_iterations,len(num_groundsites),len(num_overpasses)))
+        fpvals = np.ndarray((num_iterations,len(num_groundsites),len(num_overpasses)))
+        xerr = np.ndarray((num_iterations,len(num_groundsites),len(num_overpasses)))
+        for k in range(num_iterations):
             for ng in range(len(num_groundsites)):
-                fovals = np.ndarray((num_iterations,))
-                fpvals = np.ndarray((num_iterations,))
-                xerr = np.ndarray((num_iterations,))
-                for k in range(num_iterations):
+                for no in range(len(num_overpasses)):
                     val = np.load(f)
                     num_gs = val[0]
                     num_op = val[1]
@@ -28,11 +28,27 @@ if __name__ == "__main__":
                     xt = np.load(f)
                     xe = np.load(f)
                     xo = np.load(f)
-                    fovals[k] = fo
-                    fpvals[k] = fp
-                    xerr[k] = np.linalg.norm(xt - xo)
-                    xerr[k] = xerr[k] * xerr[k]
+                    fovals[k,ng,no] = fo
+                    fpvals[k,ng,no] = fp
+                    xerr[k,ng,no] = np.linalg.norm(xt - xo)        # compute norm
+                    xerr[k,ng,no] = xerr[k,ng,no] * xerr[k,ng,no]  # square square norm
+                    print([num_gs, num_op])
                     # print(xt)
                     # print(xo)
                     # print(' ')
-                print([num_gs, num_op, np.mean(fovals), np.std(fovals), np.mean(fpvals), np.std(fpvals), np.sqrt(np.mean(xerr))])
+                # print([num_gs, num_op, np.mean(fovals), np.std(fovals), np.mean(fpvals), np.std(fpvals), np.sqrt(np.mean(xerr))])
+        print(fovals)
+        print(" ")
+        print(fpvals)
+        print(" ")
+        print(xerr)
+
+        for ng in range(len(num_groundsites)):
+            for no in range(len(num_overpasses)):
+                print("[gs, op] = [",num_groundsites[ng],",",num_overpasses[no],"]");
+                print([np.mean(np.squeeze(fovals[:,ng,no]))/(num_groundsites[ng]*num_overpasses[no]),
+                       np.std(np.squeeze(fovals[:,ng,no]))/(num_groundsites[ng]*num_overpasses[no]),
+                       np.mean(np.squeeze(fovals[:,ng,no]))/(num_groundsites[ng]*num_overpasses[no]),
+                       np.std(np.squeeze(fovals[:,ng,no]))/(num_groundsites[ng]*num_overpasses[no]),
+                       np.sqrt(np.mean(np.squeeze(xerr[:,ng,no]))/(num_groundsites[ng]*num_overpasses[no]))])
+                

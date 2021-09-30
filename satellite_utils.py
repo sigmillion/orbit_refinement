@@ -26,8 +26,8 @@ class satellite:
         return tle2vec(line1, line2)
 
     def perturb_satellite(self, scale=1.0):
-        seed_val = 1234
-        seed(seed_val)  # Set the seed for repeatability
+        # seed_val = 1234
+        # seed(seed_val)  # Set the seed for repeatability
         
         # Step 1. Extract vec
         # inclination, raan, ap, ma, mm = self.sat2vec()

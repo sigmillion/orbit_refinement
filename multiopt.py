@@ -28,15 +28,18 @@ def objective(x, links_est, links_true, prediction=False):
     else:
         return prediction_error / prediction_samples
 
-def runopt(num_ground_sites=3, window_length_days=3, num_overpasses=3):
+def runopt(sat_true, sat_est, num_ground_sites=3, window_length_days=3, num_overpasses=3):
+    # This is all done in the calling program now.
     # Get a satellite
-    leo = space()
-    sat_true = satellite(leo.select_satellite())
-    # sat_true = satellite(sat_true.vec2sat(sat_true.sat2vec()))  # is this just for testing???
-
+    # leo = space()
+    # sat_true = satellite(leo.select_satellite())
+    # # sat_true = satellite(sat_true.vec2sat(sat_true.sat2vec()))  # is this just for testing???
+    #
     # Get a perturbed TLE satellite
-    sat_est = satellite(sat_true.perturb_satellite(0.1))
-    # sat_est = sat_true
+    # sat_est = satellite(sat_true.perturb_satellite(0.1))
+    # # sat_est = sat_true
+
+    # Get bounding box for optimization
     perturb_box = sat_true.get_bounds()
     
     # Get a list of ground sites
