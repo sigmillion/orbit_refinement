@@ -16,7 +16,7 @@ if __name__ == "__main__":
     # Set simulation parameters
     num_overpasses = [1, 3, 5]
     num_groundsites = [1, 3, 5]
-    num_iterations = 1
+    num_iterations = 30
         
     # Save data
     with open('data.npy', 'wb') as f:
@@ -36,6 +36,7 @@ if __name__ == "__main__":
 
             for ng in range(len(num_groundsites)):
                 for no in range(len(num_overpasses)):
+                    print("Iteration = ",[k,ng,no])
                     xt, xe, xo, fo, fp, nit = runopt(sat_true, sat_est,
                                                     num_groundsites[ng],
                                                     num_overpasses[no],
