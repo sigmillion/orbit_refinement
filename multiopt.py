@@ -1,4 +1,5 @@
 from satellite_utils import space, satellite
+from ground_site_list import ground_site_list
 from ground_site import ground_site
 from link import link
 from scipy.optimize import minimize
@@ -45,7 +46,8 @@ def runopt(sat_true, sat_est, num_ground_sites=3, window_length_days=3, num_over
     # Get a list of ground sites
     ground_sites = []
     for i in range(num_ground_sites):
-        ground_sites.append(ground_site(0.0,10.0*i))  # Put ground sites around equator
+        # ground_sites.append(ground_site(0.0,10.0*i))  # Put ground sites around equator
+        ground_sites.append(ground_site_list[i].ground_site)
 
     # Setup ground-satellite links
     links_true = [link(gs, sat_true, window_length_days, num_overpasses) for gs in ground_sites]
