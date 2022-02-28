@@ -12,6 +12,7 @@ ground_site_list = [gse(21.2788, -157.8336, 'Hawaii'),
                     gse(1.366667, 103.8, 'Singapore'),
                     gse(38.761667, -27.095, 'Azores'),
                     gse(8.716667, 167.733333, 'Kwajalein Island'),
-                    gse(-7.933333, -14.416667, 'Ascension Island')]
+                    gse(-7.933333, -14.416667, 'Ascension Island'),
+                    gse(-7.319500, 72.422859, 'Diego Garcia')]
 
 

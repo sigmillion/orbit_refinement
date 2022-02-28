@@ -23,7 +23,7 @@ def objective(x, links_est, links_true, prediction=False):
         total_samples = total_samples + new_samples
         prediction_error = prediction_error + new_prediction_error
         prediction_samples = prediction_samples + new_prediction_samples
-    print('Range rate error = ', total_error / total_samples)
+    #print('Range rate error = ', total_error / total_samples)
     if prediction==False:
         return total_error / total_samples
     else:
@@ -100,7 +100,7 @@ def runopt(sat_true, sat_est, num_ground_sites=3, window_length_days=3, num_over
     print(nit)
     print(opt_result.message)
     fp = objective(xo, links_est, links_true, prediction=True)
-    
+    print(fp)
     # We want to find out how many ground sites and overpasses
     # lead to an identifiable solution.
 

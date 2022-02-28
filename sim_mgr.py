@@ -15,8 +15,8 @@ if __name__ == "__main__":
 
     # Set simulation parameters
     num_overpasses = [1, 3, 5]
-    num_groundsites = [1, 3, 6]
-    num_iterations = 1
+    num_groundsites = [1, 3, 5, 7]
+    num_iterations = 3
         
     # Save data
     with open('data.npy', 'wb') as f:
